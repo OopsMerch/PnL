@@ -149,10 +149,10 @@
         
         .sheet-head { height: 60px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; }
 
-        .calc-body { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 20px; }
-        .calc-display { font-size: 52px; font-weight: 700; text-align: right; padding: 0 20px; margin-bottom: 24px; letter-spacing: -2px; }
+        .calc-body { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 12px; }
+        .calc-display { font-size: 52px; font-weight: 700; text-align: right; padding: 0 20px; margin-bottom: 20px; letter-spacing: -2px; }
         
-        .input-bar { display: flex; gap: 12px; padding: 0 16px 24px; max-width: 100%; }
+        .input-bar { display: flex; gap: 12px; padding: 0 16px 20px; max-width: 100%; }
         
         .t-input {
             background: var(--card); border: 1px solid var(--border); border-radius: 14px;
@@ -166,7 +166,7 @@
 
         .cat-scroll { 
             display: flex; gap: 16px; overflow-x: auto; 
-            padding: 12px 16px 24px;
+            padding: 12px 16px 20px;
             -webkit-overflow-scrolling: touch; scrollbar-width: none;
         }
         .cat-scroll::-webkit-scrollbar { display: none; }
@@ -198,7 +198,7 @@
             background: var(--card); padding-bottom: calc(var(--safe-bottom) + 8px); 
             border-top: 1px solid var(--border);
         }
-        .key { height: 72px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 500; cursor: pointer; }
+        .key { height: 68px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 500; cursor: pointer; }
         .key:active { background: rgba(255,255,255,0.05); }
         
         .type-tog { display: flex; background: var(--card); padding: 4px; border-radius: 12px; border: 1px solid var(--border); }
@@ -285,10 +285,31 @@
             <div class="cat-scroll" id="cat-list"></div>
         </div>
         <div class="numpad">
-            <div class="key" onclick="Calc.press('1')">1</div><div class="key" onclick="Calc.press('2')">2</div><div class="key" onclick="Calc.press('3')">3</div><div class="key" onclick="Calc.press('/')" style="color:var(--text-sec)">÷</div>
-            <div class="key" onclick="Calc.press('4')">4</div><div class="key" onclick="Calc.press('5')">5</div><div class="key" onclick="Calc.press('6')">6</div><div class="key" onclick="Calc.press('*')" style="color:var(--text-sec)">×</div>
-            <div class="key" onclick="Calc.press('7')">7</div><div class="key" onclick="Calc.press('8')">8</div><div class="key" onclick="Calc.press('9')">9</div><div class="key" onclick="Calc.press('-')" style="color:var(--text-sec)">−</div>
-            <div class="key" onclick="Calc.press('.')">.</div><div class="key" onclick="Calc.press('0')">0</div><div class="key" onclick="Calc.del()"><i data-lucide="delete" width="24"></i></div><div class="key" onclick="Calc.save()" style="background:var(--accent); color:var(--accent-text); border-radius:18px; margin:6px"><i data-lucide="check" width="30"></i></div>
+            <div class="key" onclick="Calc.clear()" style="color:var(--text-sec)">C</div>
+            <div class="key" onclick="Calc.toggle()" style="color:var(--text-sec)">±</div>
+            <div class="key" onclick="Calc.percent()" style="color:var(--text-sec)">%</div>
+            <div class="key" onclick="Calc.press('/')" style="color:var(--accent)">÷</div>
+
+            <div class="key" onclick="Calc.press('7')">7</div>
+            <div class="key" onclick="Calc.press('8')">8</div>
+            <div class="key" onclick="Calc.press('9')">9</div>
+            <div class="key" onclick="Calc.press('*')" style="color:var(--accent)">×</div>
+
+            <div class="key" onclick="Calc.press('4')">4</div>
+            <div class="key" onclick="Calc.press('5')">5</div>
+            <div class="key" onclick="Calc.press('6')">6</div>
+            <div class="key" onclick="Calc.press('-')" style="color:var(--accent)">-</div>
+
+            <div class="key" onclick="Calc.press('1')">1</div>
+            <div class="key" onclick="Calc.press('2')">2</div>
+            <div class="key" onclick="Calc.press('3')">3</div>
+            <div class="key" onclick="Calc.press('+')" style="color:var(--accent)">+</div>
+
+            <div class="key" style="grid-column: span 2" onclick="Calc.press('0')">0</div>
+            <div class="key" onclick="Calc.press('.')">.</div>
+            <div class="key" onclick="Calc.save()" style="background:var(--accent); color:var(--accent-text); border-radius:18px; margin:6px">
+                <i data-lucide="check" width="28"></i>
+            </div>
         </div>
     </div>
 
@@ -317,7 +338,15 @@
 
         const DefState = { txs: [], cats: { expense: [ {id:'e1', name:'Еда', icon:'coffee'}, {id:'e2', name:'Авто', icon:'car'} ], income: [ {id:'i1', name:'ЗП', icon:'briefcase'} ] }, settings: { currency: 'RUB', theme: 'oled', accent: '#ffffff' }, rates: { 'RUB': 1 } };
         const Store = { get() { try { const d = JSON.parse(localStorage.getItem(DB_KEY) || 'null'); return d ? d : JSON.parse(JSON.stringify(DefState)); } catch { return JSON.parse(JSON.stringify(DefState)); } }, set(d) { localStorage.setItem(DB_KEY, JSON.stringify(d)); } };
-        const MathX = { safeEval(s) { try { return new Function('return ' + s.replace(/[^0-9+\-*/.]/g, ''))() || 0; } catch { return 0; } }, fmt(n) { return n.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}); } };
+        const MathX = { 
+            safeEval(s) { 
+                try { 
+                    const cleaned = s.replace(/[^0-9+\-*/.]/g, '');
+                    return new Function('return ' + (cleaned || '0'))() || 0; 
+                } catch { return 0; } 
+            }, 
+            fmt(n) { return n.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}); } 
+        };
 
         const App = {
             data: null, chart: null, catEdit: false,
@@ -370,14 +399,10 @@
                 const bal = document.getElementById('total-bal').innerText;
                 const link = window.location.href;
                 const text = `Мой финансовый отчет в PnL:\nТекущий баланс ${bal}.\n\nСсылка на PnL:\n${link}`;
-                
                 if (navigator.share) {
-                    navigator.share({ title: 'PnL Finance', text: text })
-                        .then(() => console.log('Shared!'))
-                        .catch((err) => console.log('Share error', err));
+                    navigator.share({ title: 'PnL Finance', text: text }).catch((err) => console.log('Share error', err));
                 } else { 
-                    navigator.clipboard.writeText(text);
-                    alert('Данные скопированы в буфер обмена:\n\n' + text); 
+                    navigator.clipboard.writeText(text); alert('Данные скопированы в буфер обмена'); 
                 }
             },
             openCalc() { document.getElementById('calc-sheet').classList.add('open'); if(!Calc.editId) Calc.reset(); },
@@ -413,6 +438,27 @@
             },
             press(k) { if(this.buf==='0' && k!=='.') this.buf=''; if(k==='.'&&this.buf.includes('.'))return; this.buf+=k; this.upd(); },
             del() { this.buf = this.buf.slice(0,-1)||'0'; this.upd(); },
+            clear() { this.buf = '0'; this.upd(); },
+            toggle() { 
+                if (this.buf !== '0') {
+                    this.buf = this.buf.startsWith('-') ? this.buf.slice(1) : '-' + this.buf;
+                    this.upd();
+                }
+            },
+            percent() { 
+                const s = this.buf; 
+                const match = s.match(/(.*?)([\+\-\*\/])?([0-9.]+)$/); 
+                if(!match) return;
+                const [_, prefix, op, lastNum] = match; 
+                const val = parseFloat(lastNum);
+                if(!op || op === '*' || op === '/') { 
+                    this.buf = prefix + (op || '') + (val / 100); 
+                } else { 
+                    const base = MathX.safeEval(prefix || '0'); 
+                    this.buf = prefix + op + (base * val / 100); 
+                }
+                this.upd();
+            },
             upd() { document.getElementById('calc-disp').innerText = this.buf; },
             save() { const val = MathX.safeEval(this.buf); if(val<=0 || !this.cat) return; const tx = { id: this.editId || Date.now().toString(), amount: App.toBase(val), type: this.type, catId: this.cat.id, catName: this.cat.name, icon: this.cat.icon, date: this.date, note: document.getElementById('note-input').value }; if(this.editId) { const i = App.data.txs.findIndex(x => x.id === this.editId); if(i!==-1) App.data.txs[i] = tx; } else App.data.txs.push(tx); Store.set(App.data); App.render(); this.editId = null; this.reset(); App.closeCalc(); }
         };
