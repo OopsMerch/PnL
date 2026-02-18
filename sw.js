@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pnl-v1';
+const CACHE_NAME = 'pnl-v2';
 const ASSETS = [
   './',
   './index.html',
